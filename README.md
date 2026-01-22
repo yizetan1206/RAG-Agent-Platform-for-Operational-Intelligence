@@ -1,263 +1,264 @@
-AI Knowledge Assistant Platform (RAG + Agents + Ops)
+# AI Knowledge Assistant Platform (RAG + Agents + Ops)
 
 A production-oriented AI application demonstrating end-to-end LLM system design:
-Retrieval-Augmented Generation (RAG), agent workflows, API integration, and deployment-ready architecture.
 
-1. Project Overview
+**Retrieval-Augmented Generation (RAG)**, agent workflows, API integration, and deployment-ready architecture.
 
-This project is a real-world AI engineering system, not a demo notebook.
+---
 
-It implements a Knowledge Assistant Platform that allows users to:
+## 1. Project Overview
 
-Ingest private documents (PDF, Markdown, Text)
+This project is a **real-world AI engineering system**, not a demo notebook.
 
-Index them into a vector database
+It implements a **Knowledge Assistant Platform** that allows users to:
 
-Query them via an LLM-powered assistant
+- Ingest private documents (PDF, Markdown, Text)
+- Index them into a vector database
+- Query them via an LLM-powered assistant
+- Use tool-augmented agents for reasoning and task execution
+- Deploy and operate the system using modern DevOps practices
 
-Use tool-augmented agents for reasoning and task execution
+**The goal is to demonstrate how AI engineers build applications around LLMs, not just train models.**
 
-Deploy and operate the system using modern DevOps practices
+---
 
-The goal is to demonstrate how AI engineers build applications around LLMs, not just train models.
-
-2. Why This Project Exists
+## 2. Why This Project Exists
 
 Most AI engineer roles today focus on:
 
-Building LLM-powered applications
-
-Designing RAG pipelines
-
-Integrating external APIs & tools
-
-Ensuring scalability, observability, and security
+- Building LLM-powered applications
+- Designing RAG pipelines
+- Integrating external APIs & tools
+- Ensuring scalability, observability, and security
 
 This repository is designed to showcase:
 
-System design thinking
+- System design thinking
+- Clean engineering practices
+- Production awareness (not research-only code)
 
-Clean engineering practices
+---
 
-Production awareness (not research-only code)
+## 3. High-Level Architecture
 
-3. High-Level Architecture
-   ┌────────────┐
-   │ Client │ (Web / API)
-   └─────┬──────┘
-   │
-   ▼
-   ┌──────────────┐
-   │ API Server │ (FastAPI)
-   │ - Auth │
-   │ - Routing │
-   │ - Validation│
-   └─────┬────────┘
-   │
-   ▼
-   ┌──────────────────────────────┐
-   │ LLM Application Layer │
-   │ - Prompt Templates │
-   │ - RAG Pipeline │
-   │ - Agent Orchestration │
-   └─────┬───────────────┬────────┘
-   │ │
-   ▼ ▼
-   ┌──────────────┐ ┌──────────────┐
-   │ Vector Store │ │ Tool APIs │
-   │ (Embeddings) │ │ (Search, DB) │
-   └──────────────┘ └──────────────┘
-   │
-   ▼
-   ┌──────────────┐
-   │ Document │
-   │ Storage │
-   └──────────────┘
+```
+┌────────────┐
+│   Client   │  (Web / API)
+└─────┬──────┘
+      │
+      ▼
+┌──────────────┐
+│  API Server  │  (FastAPI)
+│  - Auth      │
+│  - Routing   │
+│  - Validation│
+└─────┬────────┘
+      │
+      ▼
+┌──────────────────────────────┐
+│      LLM Application Layer   │
+│  - Prompt Templates          │
+│  - RAG Pipeline              │
+│  - Agent Orchestration       │
+└─────┬───────────────┬────────┘
+      │               │
+      ▼               ▼
+┌──────────────┐  ┌──────────────┐
+│ Vector Store │  │  Tool APIs   │
+│ (Embeddings) │  │ (Search, DB) │
+└──────────────┘  └──────────────┘
+      │
+      ▼
+┌──────────────┐
+│ Document     │
+│ Storage      │
+└──────────────┘
+```
 
-4. Core Features (V1)
-   4.1 Retrieval-Augmented Generation (RAG)
+---
 
-Document ingestion & chunking
+## 4. Core Features (V1)
 
-Embedding generation
+### 4.1 Retrieval-Augmented Generation (RAG)
 
-Vector similarity search
+- Document ingestion & chunking
+- Embedding generation
+- Vector similarity search
+- Context-aware LLM responses
+- Source attribution (citations)
 
-Context-aware LLM responses
+### 4.2 Agent-Based Reasoning
 
-Source attribution (citations)
+- Tool-augmented LLM agents
+- Multi-step reasoning workflows
+- Structured task execution (e.g. search → analyze → summarize)
 
-4.2 Agent-Based Reasoning
+### 4.3 API-First Design
 
-Tool-augmented LLM agents
+- FastAPI backend
+- Clear request/response contracts
+- Separation of inference logic and API layer
 
-Multi-step reasoning workflows
+### 4.4 Production-Oriented Setup
 
-Structured task execution (e.g. search → analyze → summarize)
+- Dockerized services
+- Environment-based configuration
+- Logging and error handling
+- Designed for cloud deployment (AWS/GCP/Azure)
 
-4.3 API-First Design
+---
 
-FastAPI backend
+## 5. Tech Stack
 
-Clear request/response contracts
+### AI / ML
 
-Separation of inference logic and API layer
+- **LLMs**: OpenAI / compatible LLM APIs
+- **Embeddings**: Sentence-transformers / OpenAI embeddings
+- **RAG Framework**: LangChain (modular usage, not magic)
+- **Vector DB**: FAISS (V1), extensible to Pinecone / Weaviate
 
-4.4 Production-Oriented Setup
+### Backend
 
-Dockerized services
+- FastAPI
+- Pydantic
+- Python 3.11
 
-Environment-based configuration
+### DevOps / Ops
 
-Logging and error handling
+- Docker
+- Docker Compose
+- `.env`-based configuration
+- Designed for Kubernetes (future)
 
-Designed for cloud deployment (AWS/GCP/Azure)
+---
 
-5. Tech Stack
-   AI / ML
+## 6. Repository Structure
 
-LLMs: OpenAI / compatible LLM APIs
+```
+.
+├── api/
+│   ├── main.py          # FastAPI entrypoint
+│   ├── routes/
+│   └── schemas/
+│
+├── core/
+│   ├── rag/
+│   ├── agents/
+│   ├── prompts/
+│   └── tools/
+│
+├── ingestion/
+│   ├── loaders/
+│   ├── chunking/
+│   └── embeddings/
+│
+├── vectorstore/
+│
+├── configs/
+│
+├── scripts/
+│
+├── docker/
+│
+├── tests/
+│
+├── docker-compose.yml
+├── Dockerfile
+├── requirements.txt
+└── README.md
+```
 
-Embeddings: Sentence-transformers / OpenAI embeddings
+---
 
-RAG Framework: LangChain (modular usage, not magic)
+## 7. Getting Started
 
-Vector DB: FAISS (V1), extensible to Pinecone / Weaviate
+### 7.1 Prerequisites
 
-Backend
+- Python 3.11+
+- Docker
+- API key for LLM provider
 
-FastAPI
+### 7.2 Environment Setup
 
-Pydantic
-
-Python 3.11
-
-DevOps / Ops
-
-Docker
-
-Docker Compose
-
-.env-based configuration
-
-Designed for Kubernetes (future)
-
-6. Repository Structure
-   .
-   ├── api/
-   │ ├── main.py # FastAPI entrypoint
-   │ ├── routes/
-   │ └── schemas/
-   │
-   ├── core/
-   │ ├── rag/
-   │ ├── agents/
-   │ ├── prompts/
-   │ └── tools/
-   │
-   ├── ingestion/
-   │ ├── loaders/
-   │ ├── chunking/
-   │ └── embeddings/
-   │
-   ├── vectorstore/
-   │
-   ├── configs/
-   │
-   ├── scripts/
-   │
-   ├── docker/
-   │
-   ├── tests/
-   │
-   ├── docker-compose.yml
-   ├── Dockerfile
-   ├── requirements.txt
-   └── README.md
-
-7. Getting Started
-   7.1 Prerequisites
-
-Python 3.11+
-
-Docker
-
-API key for LLM provider
-
-7.2 Environment Setup
+```bash
 cp .env.example .env
+```
 
 Set:
 
+```env
 OPENAI_API_KEY=your_key_here
+```
 
-7.3 Run with Docker
+### 7.3 Run with Docker
+
+```bash
 docker-compose up --build
+```
 
 API will be available at:
 
+```
 http://localhost:8000
+```
 
-8. Example Use Cases
+---
 
-Internal company knowledge assistant
+## 8. Example Use Cases
 
-Technical documentation Q&A
+- Internal company knowledge assistant
+- Technical documentation Q&A
+- Compliance / policy search
+- Engineering onboarding assistant
+- Domain-specific expert system
 
-Compliance / policy search
+---
 
-Engineering onboarding assistant
+## 9. Engineering Principles Followed
 
-Domain-specific expert system
+- Separation of concerns
+- Composable pipelines
+- Explicit data flow
+- No hidden magic
+- Production-first mindset
 
-9. Engineering Principles Followed
+**This project intentionally avoids:**
 
-Separation of concerns
+- Notebook-only demos
+- Over-abstracted "one-line" frameworks
+- Uncontrolled prompt sprawl
 
-Composable pipelines
+---
 
-Explicit data flow
+## 10. Roadmap
 
-No hidden magic
+### V2 (Planned)
 
-Production-first mindset
+- Authentication & user isolation
+- Multi-tenant vector indexes
+- Streaming responses
+- Evaluation & observability (LLM metrics)
+- Background ingestion jobs
 
-This project intentionally avoids:
+### V3 (Future)
 
-Notebook-only demos
+- Kubernetes deployment
+- Agent memory & planning
+- Active learning feedback loop
+- Cost & latency optimization
 
-Over-abstracted “one-line” frameworks
+---
 
-Uncontrolled prompt sprawl
-
-10. Roadmap
-    V2 (Planned)
-
-Authentication & user isolation
-
-Multi-tenant vector indexes
-
-Streaming responses
-
-Evaluation & observability (LLM metrics)
-
-Background ingestion jobs
-
-V3 (Future)
-
-Kubernetes deployment
-
-Agent memory & planning
-
-Active learning feedback loop
-
-Cost & latency optimization
-
-11. Disclaimer
+## 11. Disclaimer
 
 This project is built for learning, demonstration, and portfolio purposes, but follows patterns used in real production systems.
 
-12. Author
+---
 
-Yi Ze Tan
+## 12. Author
+
+**Yi Ze Tan**
+
 AI Engineer | LLM Systems | Applied AI
+
+---
