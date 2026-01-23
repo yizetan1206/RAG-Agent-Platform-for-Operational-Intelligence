@@ -8,9 +8,7 @@ A production-oriented AI application demonstrating end-to-end LLM system design:
 
 ## 1. Project Overview
 
-This project is a **real-world AI engineering system**, not a demo notebook.
-
-It implements a **Knowledge Assistant Platform** that allows users to:
+This project implements a **Knowledge Assistant Platform** that allows users to:
 
 - Ingest private documents (PDF, Markdown, Text)
 - Index them into a vector database
@@ -24,18 +22,19 @@ It implements a **Knowledge Assistant Platform** that allows users to:
 
 ## 2. Why This Project Exists
 
-Most AI engineer roles today focus on:
+Modern LLM applications require more than just API calls. They demand:
 
-- Building LLM-powered applications
-- Designing RAG pipelines
-- Integrating external APIs & tools
-- Ensuring scalability, observability, and security
+- Robust RAG pipelines for knowledge retrieval
+- Agent orchestration for complex reasoning
+- External tool integration for real-world tasks
+- Scalable architecture with observability and security
 
-This repository is designed to showcase:
+This project demonstrates:
 
-- System design thinking
-- Clean engineering practices
-- Production awareness (not research-only code)
+- End-to-end system design for LLM applications
+- Production-grade engineering practices
+- Real-world implementation patterns beyond tutorials
+- Operational readiness from day one
 
 ---
 
