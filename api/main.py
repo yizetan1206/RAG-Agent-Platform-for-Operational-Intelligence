@@ -6,6 +6,8 @@ from ingestion.chunker import chunk_text
 from ingestion.embeddings import EmbeddingProvider
 from vectorstore.faiss_store import FAISSStore
 from core.rag_service import RAGService
+from core.llm_provider import LLMProvider
+
 
 app = FastAPI(
     title="AI Knowledge Assistant",
@@ -43,15 +45,23 @@ embeddings = embedder.embed_texts(chunks)
 
 store = FAISSStore(dim=len(embeddings[0]))
 store.add_vectors(embeddings, metadatas)
-
-rag_service = RAGService(store, embedder)
 # ----------------------------------
+
+llm = LLMProvider()
+
+rag_service = RAGService(
+    store=store,
+    embedder=embedder,
+    llm=llm
+)
+
 
 
 @app.post("/query", response_model=QueryResponse)
 def query_rag(request: QueryRequest):
-    contexts = rag_service.query(request.question, request.top_k)
+    result = rag_service.query(request.question, request.top_k)
     return {
         "question": request.question,
-        "contexts": contexts,
+        "answer": result["answer"],
+        "contexts": result["contexts"],
     }

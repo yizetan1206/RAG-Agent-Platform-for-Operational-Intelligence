@@ -4,3 +4,4 @@ pydantic-settings
 PyPDF2
 faiss-cpu
 sentence-transformers
+openai

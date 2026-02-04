@@ -15,4 +15,5 @@ class RetrievedContext(BaseModel):
 
 class QueryResponse(BaseModel):
     question: str
+    answer: str
     contexts: List[RetrievedContext]
