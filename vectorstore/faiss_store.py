@@ -1,6 +1,7 @@
 import faiss
 import numpy as np
 from typing import List, Dict
+import pickle
 
 
 class FAISSStore:
@@ -26,3 +27,23 @@ class FAISSStore:
                     **self.metadatas[idx],
                 })
         return results
+    
+    # ---------------- Persistence Methods ----------------
+
+    def save(self, index_path: str, metadata_path: str):
+        """Save FAISS index and metadata separately."""
+        faiss.write_index(self.index, index_path)
+        with open(metadata_path, "wb") as f:
+            pickle.dump(self.metadatas, f)
+
+    @classmethod
+    def load(cls, index_path: str, metadata_path: str):
+        """Load FAISS index and metadata into a new FAISSStore object."""
+        index = faiss.read_index(index_path)
+        with open(metadata_path, "rb") as f:
+            metadatas = pickle.load(f)
+
+        store = cls(dim=index.d)
+        store.index = index
+        store.metadatas = metadatas
+        return store

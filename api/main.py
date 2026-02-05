@@ -1,4 +1,7 @@
+from pathlib import Path
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
+
 from api.health import router as health_router
 from api.schemas.query import QueryRequest, QueryResponse
 from ingestion.loader import DocumentLoader
@@ -8,10 +11,66 @@ from vectorstore.faiss_store import FAISSStore
 from core.rag_service import RAGService
 from core.llm_provider import LLMProvider
 
+from dotenv import load_dotenv
+load_dotenv()
+
+
+INDEX_PATH = Path("data/faiss.index")
+META_PATH = Path("data/faiss_meta.pkl")
+
+
+def init_rag_service() -> RAGService:
+    embedder = EmbeddingProvider()
+
+    if INDEX_PATH.exists() and META_PATH.exists():
+        store = FAISSStore.load(str(INDEX_PATH), str(META_PATH))
+        print("Loaded FAISS index from disk")
+    else:
+        loader = DocumentLoader("tests/datasets/test_docs")
+        docs = loader.load()
+
+        chunks = []
+        metadatas = []
+        for doc in docs:
+            for chunk in chunk_text(doc["content"]):
+                chunks.append(chunk)
+                metadatas.append({
+                    "source": doc["source"],
+                    "text": chunk
+                })
+
+        embeddings = embedder.embed_texts(chunks)
+
+        store = FAISSStore(dim=len(embeddings[0]))
+        store.add_vectors(embeddings, metadatas)
+
+        INDEX_PATH.parent.mkdir(parents=True, exist_ok=True)
+        store.save(str(INDEX_PATH), str(META_PATH))
+        print("FAISS index built and saved")
+
+    llm = LLMProvider()
+
+    return RAGService(
+        store=store,
+        embedder=embedder,
+        llm=llm
+    )
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # -------- Startup --------
+    app.state.rag_service = init_rag_service()
+    yield
+    # -------- Shutdown --------
+    # (Nothing to close yet, but this is where it goes)
+    # e.g. app.state.rag_service.close()
+
 
 app = FastAPI(
     title="AI Knowledge Assistant",
-    version="0.1.0"
+    version="0.1.0",
+    lifespan=lifespan
 )
 
 app.include_router(health_router)
@@ -22,44 +81,15 @@ def root():
     return {"status": "ok", "service": "ai-knowledge-assistant"}
 
 
-# ---------- RAG BOOTSTRAP ----------
-loader = DocumentLoader("tests/datasets/test_docs")
-docs = loader.load()
-print(f"Loaded {len(docs)} documents",flush=True)
-
-chunks = []
-metadatas = []
-
-for doc in docs:
-    doc_chunks = chunk_text(doc["content"])
-    for chunk in doc_chunks:
-        chunks.append(chunk)
-        metadatas.append({
-            "source": doc["source"],
-            "text": chunk,
-        })
-
-
-embedder = EmbeddingProvider()
-embeddings = embedder.embed_texts(chunks)
-
-store = FAISSStore(dim=len(embeddings[0]))
-store.add_vectors(embeddings, metadatas)
-# ----------------------------------
-
-llm = LLMProvider()
-
-rag_service = RAGService(
-    store=store,
-    embedder=embedder,
-    llm=llm
-)
-
-
-
 @app.post("/query", response_model=QueryResponse)
 def query_rag(request: QueryRequest):
-    result = rag_service.query(request.question, request.top_k)
+    rag_service: RAGService = app.state.rag_service
+
+    result = rag_service.query(
+        request.question,
+        request.top_k
+    )
+
     return {
         "question": request.question,
         "answer": result["answer"],
