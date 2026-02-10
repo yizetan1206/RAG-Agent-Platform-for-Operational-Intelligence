@@ -14,6 +14,17 @@ from core.llm_provider import LLMProvider
 from dotenv import load_dotenv
 load_dotenv()
 
+from core.logger import setup_logger
+
+setup_logger(
+    level="INFO",
+    service_name="ai-knowledge-assistant"
+)
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 
 INDEX_PATH = Path("data/faiss.index")
 META_PATH = Path("data/faiss_meta.pkl")
@@ -24,7 +35,7 @@ def init_rag_service() -> RAGService:
 
     if INDEX_PATH.exists() and META_PATH.exists():
         store = FAISSStore.load(str(INDEX_PATH), str(META_PATH))
-        print("Loaded FAISS index from disk")
+        logger.info("FAISS index loaded from disk")
     else:
         loader = DocumentLoader("tests/datasets/test_docs")
         docs = loader.load()
@@ -46,7 +57,8 @@ def init_rag_service() -> RAGService:
 
         INDEX_PATH.parent.mkdir(parents=True, exist_ok=True)
         store.save(str(INDEX_PATH), str(META_PATH))
-        print("FAISS index built and saved")
+        logger.info("FAISS index built and saved")
+
 
     llm = LLMProvider()
 
@@ -59,12 +71,18 @@ def init_rag_service() -> RAGService:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # -------- Startup --------
-    app.state.rag_service = init_rag_service()
-    yield
-    # -------- Shutdown --------
-    # (Nothing to close yet, but this is where it goes)
-    # e.g. app.state.rag_service.close()
+    logger.info("Application startup initiated")
+
+    try:
+        app.state.rag_service = init_rag_service()
+        logger.info("RAG service initialized successfully")
+        yield
+    except Exception:
+        logger.exception("Failed during application startup")
+        raise
+    finally:
+        logger.info("Application shutdown completed")
+
 
 
 app = FastAPI(
@@ -85,10 +103,17 @@ def root():
 def query_rag(request: QueryRequest):
     rag_service: RAGService = app.state.rag_service
 
+    logger.debug(
+        "Received query",
+        extra={"top_k": request.top_k}
+    )
+
     result = rag_service.query(
         request.question,
         request.top_k
     )
+
+    logger.info("Query processed successfully")
 
     return {
         "question": request.question,

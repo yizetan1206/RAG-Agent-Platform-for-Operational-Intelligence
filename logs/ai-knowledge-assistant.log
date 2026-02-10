@@ -1,0 +1,20 @@
+2026-02-10 15:17:10,046 | INFO | api.main | Application startup initiated
+2026-02-10 15:17:10,047 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-02-10 15:17:10,049 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-02-10 15:17:14,595 | INFO | ingestion.embeddings | Embedding model loaded
+2026-02-10 15:17:14,595 | INFO | vectorstore.faiss_store | Loading FAISS index from disk
+2026-02-10 15:17:14,627 | INFO | vectorstore.faiss_store | FAISSStore initialized
+2026-02-10 15:17:14,628 | INFO | vectorstore.faiss_store | FAISS index loaded
+2026-02-10 15:17:14,628 | INFO | api.main | FAISS index loaded from disk
+2026-02-10 15:17:15,100 | INFO | core.llm_provider | LLMProvider initialized
+2026-02-10 15:17:15,100 | INFO | core.rag_service | RAGService initialized
+2026-02-10 15:17:15,100 | INFO | api.main | RAG service initialized successfully
+2026-02-10 15:37:32,601 | INFO | core.rag_service | Relevant contexts found
+2026-02-10 15:37:34,481 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-02-10 15:37:34,492 | INFO | core.llm_provider | LLM generation completed
+2026-02-10 15:37:34,492 | INFO | api.main | Query processed successfully
+2026-02-10 15:38:46,588 | INFO | core.rag_service | Relevant contexts found
+2026-02-10 15:38:47,761 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-02-10 15:38:47,765 | INFO | core.llm_provider | LLM generation completed
+2026-02-10 15:38:47,765 | INFO | api.main | Query processed successfully
+2026-02-10 15:39:00,662 | INFO | api.main | Application shutdown completed
